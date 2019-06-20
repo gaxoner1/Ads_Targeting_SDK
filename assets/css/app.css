@@ -1,0 +1,44 @@
+body {
+  font-family: 'avenir-next', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+}
+
+header.brand {
+  padding: 30px 0;
+}
+
+@media (max-width: 992px) {
+  header.brand {
+    padding: 10px 0;
+  }
+}
+
+h1.brand-logo {
+  margin: 0;
+  font-weight: normal;
+  font-size: 30px;
+  color: rgb(75,79,92);
+}
+
+ul.brand-nav {
+  margin: 0;
+  text-align: right;
+  list-style: none;
+}
+
+a.brand-nav-link {
+  font-weight: normal;
+  font-size: 16px;
+  color: rgb(173,175,188);
+}
+
+a.brand-nav-link:hover {
+  text-decoration: none;
+  color: rgb(138,142,159);
+}
+
+p {
+  font-size: 18px;
+  font-weight: normal;
+  color: rgb(75, 85, 90);
+  line-height: 1.6;
+}
