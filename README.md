@@ -36,7 +36,7 @@ Using Permutive segments to target advertisements is a very common use case, whi
 In this part of the challenge, you'll write an simple integration with DoubleClick for sending Permutive targeting data into DoubleClick ad-server alongside ad-requests. You're able to interact with DoubleClick's SDK JavaScript from the page, by making calls to the PubAdsService (`window.googletag.pubads()`). We suggest you use Google's [PubAdsService documentation](https://developers.google.com/doubleclick-gpt/reference#googletagpubadsservice) for this task.
 
 What we've done:
-  - We've set up a key-value in our DFP account, which targets a gaming ad whenever a specific key-value pair is sent as targeting data on the ad-request. The key we've configured is `permutive`, and the targeting value is `gaming`.
+  - We've set up a key-value in our DFP account, which targets a gaming ad whenever a specific key-value pair is sent as targeting data on the ad-request. The key we've configured is **`permutive`**, and the targeting value is **`gaming`**.
   - We've set up an ad slot on every article page on the demo publisher website. There is a default ad which is configured to be shown when no specific targeting data is present.
   - We've also set up a Permutive segment for `Gamers`, with segment ID *6912*. This segment consists of users who have at least one `Pageview` event where the `categories` list contained `gaming`.
 
