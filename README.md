@@ -21,7 +21,8 @@ In your pull request, please add notes including a brief explanation of your sol
 
 ### 1. Track Pageview Events
 
-  - Write some JavaScript to implement basic [event tracking](https://developer.permutive.com/page/the-permutive-javascript-sdk#section--track-an-event-track-an-event-) on every page, for `Pageview` events. These events should have properties for `title` (string), `author` (string) and `categories` (array of strings), whenever this information is available. If necessary, feel free to use a third-party library like jQuery to help with this.
+  - Write some JavaScript to implement basic [event tracking](https://developer.permutive.com/page/the-permutive-javascript-sdk#section--track-an-event-track-an-event-) on every page, for `Pageview` events.
+  - These events should have properties for `title` (string), `author` (string) and `categories` (array of strings), whenever this information is available. If necessary, feel free to use a third-party library like jQuery to help with this.
 
 ### 2. Track Scroll Events [Optional]
 
