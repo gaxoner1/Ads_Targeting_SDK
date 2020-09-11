@@ -19,6 +19,8 @@ In your pull request, please add notes including a brief explanation of your sol
   - Please submit your solution inside `solution/solution.js`
   - Note that our API enforces schema validation to prevent erroneous data being collected, so every event must conform to an event schema - otherwise the API will return a 400 error (you can take a look at the network response). Typically these schemas are configured in the Permutive dashboard, however we've already set up the event schemas for the `Pageview` and `Scroll` event types.
 
+#### Password for all Permutive documentations is: `qBx{cHTGk@MZhtCrfGe[JGAdo2X`
+
 ### 1. Track Pageview Events
 
   - Write some JavaScript to implement basic [event tracking](https://developer.permutive.com/page/the-permutive-javascript-sdk#section--track-an-event-track-an-event-) on every page, for `Pageview` events.
