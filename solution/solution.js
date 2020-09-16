@@ -21,8 +21,6 @@ window.addEventListener('load', function () {
   const options = {
     success: function(event) {
       console.log(`success callback ${JSON.stringify(event)}`)
-      //console.log("Tracked a new " + event.name + " event.");
-      //console.log(`in options ${JSON.stringify(event)}`)
     },
     error: function(errors) {
       console.log(`failure callback ${JSON.stringify(errors)}`)
@@ -58,9 +56,11 @@ window.addEventListener('load', function () {
   });
   */
 
+/*
   function segTest () {
     permutive.segment(6912, function(result) {
       if (result) {
+        //call on trigger? to launch
         console.log(`user is in ${result}`)
       } else {
         console.log('else reached')
@@ -68,19 +68,45 @@ window.addEventListener('load', function () {
     });
   }
 
+  permutive.trigger(6912, "result", function(obj){
+  if (obj.result) {
+    $("#email-subscription-popup").show();
+    permutive.track("ShownEmailSubscriptionPopup", {});
+  }
+});
+*/
+
+
+permutive.segment(6912, function(result) {
+  if (result) {
+    permutive.trigger(6912, "result", function(obj){
+    if (obj.result) {
+      getGamerAd()
+      //TODO: FIND OUT ABOUT track in body:
+      //permutive.track("ShownEmailSubscriptionPopup", {});
+    }
+  });    //console.log(`user is in ${result}`) 
+  } else {
+    console.log('else reached')
+  }
+});
+
   //GET THE PERMUTIVE ID:
   //console.log(localStorage.getItem("permutive-id"))
 
+  //Test to get segment ID (6912);
+  //console.log(`the permutive data in localStorage: ${(localStorage.getItem("permutive-data"))}`)
+
+function getGamerAd (){
   //google publisher tag
-  //window.googletag.pubads()
   window.googletag = window.googletag || {};
   window.googletag.cmd = window.googletag.cmd || [];
   window.googletag.cmd.push(function () {
-    // set targeting here
-        // Page-level targeting.
-        window.googletag.pubads().setTargeting('permutive', 'gaming');
-
-        googletag.enableServices();
+  // set targeting here - Page-level targeting.
+  window.googletag.pubads().setTargeting('permutive', 'gaming');
+  googletag.enableServices();
   });
+}
+
 
 }) // End of window.load
