@@ -1,112 +1,97 @@
+//wait for HTML to load before running permutive script to ensure data is available.
 window.addEventListener('load', function () {
 
+//calculate height of rendered page to track scroll event
+function getDocHeight() {
+  let D = document;
+  return Math.max(
+      D.body.scrollHeight, D.documentElement.scrollHeight,
+      D.body.offsetHeight, D.documentElement.offsetHeight,
+      D.body.clientHeight, D.documentElement.clientHeight
+  )
+}
+//Grab article title to pass in Pageview tracking:
+function getTitle () {
+  const titleClass = document.getElementsByTagName("h2")[0];
+  let title = titleClass.innerText;
+  return title;
+};
+//Grab article author to pass in Pageview tracking:
+function getAuthor() {
+  const authorElem = document.getElementsByTagName("b")[0];
+  const authorText = authorElem.innerText;
+  return authorText;
+};
+//use Segment module to check if user enters gamer segment configured in Dashboard
+function setGamerSeg () {
+  permutive.segment(6912, function(result) {
+  if (result) {
+    console.log(`2) Response returned in permutve.segment -if is gamer segment: ${result}`)
+    getGamerAd();
+  } else {
+    console.log(`segment doesnt return gamer - served default`)
+  }
+});
+};
+//send first party attribute into DFP, passing key/value to fetch target add to render
+function getGamerAd () {
+  //google publisher tag
+  window.googletag = window.googletag || {};
+  window.googletag.cmd = window.googletag.cmd || [];
+  window.googletag.cmd.push(function () {
+  window.googletag.pubads().setTargeting('permutive', 'gaming');
+  googletag.enableServices();
+  console.log( `3) pubads called with segment data `)
+  });
+}
 
-  //Grab article attributes to pass in Pageview tracking:
-  function getTitle () {
-    const titleClass = document.getElementsByTagName("h2")[0];
-    console.log(`titleclass: ${titleClass}`)
-    let title = titleClass.innerText;
-    console.log(`Title returned: ${title}`)
-    return title;
-  };
+//Use Track module to pass metadata to permutive (title, author, categories); then
+//pass segment module to check against gamer profile.
+//function trackPageview () {
+const options = {
+  success: function(event) {
+    //console.log returns event data collected.
+    console.log(`1) success callback in Permutive.track: ${JSON.stringify(event)}`)
+    setGamerSeg();
+  },
+  error: function(errors) {
+    console.log(`failure callback ${JSON.stringify(errors)}`)
+  }
+}
+  permutive.track('Pageview', {
+  title: getTitle(),
+  author: getAuthor(),
+  categories: ["gaming", "string2", "string3"]
+}, options);
+//};
 
-  function getAuthor() {
-    const authorElem = document.getElementsByTagName("b")[0];
-    console.log(`author element: ${authorElem}`)
-    const authorText = authorElem.innerText;
-    console.log(`Author returned: ${authorText}`)
-    return authorText;
-  };
-
-  const options = {
-    success: function(event) {
-      console.log(`success callback ${JSON.stringify(event)}`)
+function trackScroll (scrollVal) {
+  const scrollOpt = {
+    success: function() {
+      console.log(`4) reached scrollval ${scrollVal/100}`)
     },
     error: function(errors) {
       console.log(`failure callback ${JSON.stringify(errors)}`)
     }
   }
-
-  // // Track an "EmailSubscription" event, with the property
-  // // `newletter` set as `true`.
-  permutive.track('Pageview', {
-    title: getTitle(),
-    author: getAuthor(),
-    categories: ["string1", "string2", "string3"]
-  }, options);
-
-  /* API Fetch:
-  fetch ('https://api.permutive.com/v2.0/events', {
-      method: 'POST',
-      headers: {
-          'X-API-Key': '0a1c1596-66d2-4939-9955-3c04dab4b0e2',
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        "user_id": "8cc26071-25a7-4033-b2c6-ff0fcb5e04a3",
-        "name": "EmailSubscription",
-        "properties": {
-          "email": "mark@facebook.com",
-          "subscriptions": {
-            "newsletter": true,
-            "updates": false
-          }
-        }
-      })
-  });
-  */
-
-/*
-  function segTest () {
-    permutive.segment(6912, function(result) {
-      if (result) {
-        //call on trigger? to launch
-        console.log(`user is in ${result}`)
-      } else {
-        console.log('else reached')
-      }
-    });
-  }
-
-  permutive.trigger(6912, "result", function(obj){
-  if (obj.result) {
-    $("#email-subscription-popup").show();
-    permutive.track("ShownEmailSubscriptionPopup", {});
-  }
-});
-*/
-
-
-permutive.segment(6912, function(result) {
-  if (result) {
-    permutive.trigger(6912, "result", function(obj){
-    if (obj.result) {
-      getGamerAd()
-      //TODO: FIND OUT ABOUT track in body:
-      //permutive.track("ShownEmailSubscriptionPopup", {});
-    }
-  });    //console.log(`user is in ${result}`) 
-  } else {
-    console.log('else reached')
-  }
-});
-
-  //GET THE PERMUTIVE ID:
-  //console.log(localStorage.getItem("permutive-id"))
-
-  //Test to get segment ID (6912);
-  //console.log(`the permutive data in localStorage: ${(localStorage.getItem("permutive-data"))}`)
-
-function getGamerAd (){
-  //google publisher tag
-  window.googletag = window.googletag || {};
-  window.googletag.cmd = window.googletag.cmd || [];
-  window.googletag.cmd.push(function () {
-  // set targeting here - Page-level targeting.
-  window.googletag.pubads().setTargeting('permutive', 'gaming');
-  googletag.enableServices();
-  });
+  permutive.track('Scroll', {
+    scroll_depth: (scrollVal/100)
+  },scrollOpt)
 }
 
+function amountscrolled(){
+  let winheight= window.innerHeight || (document.documentElement || document.body).clientHeight
+  let docheight = getDocHeight()
+  let scrollTop = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop
+  let trackLength = docheight - winheight
+  let pctScrolled = Math.floor(scrollTop/trackLength * 100) // gets percentage scrolled (ie: 80 or NaN if tracklength == 0)
+  if (pctScrolled % 25 == 0 && pctScrolled !== 0) {
+    console.log(pctScrolled + '% scrolled')
+    trackScroll(pctScrolled)
+  }
+}
+window.addEventListener("scroll", function(){
+  amountscrolled()
+}, false)
 
 }) // End of window.load
