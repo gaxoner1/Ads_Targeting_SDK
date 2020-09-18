@@ -29,7 +29,7 @@ function setGamerSeg () {
     console.log(`2) Response returned in permutve.segment -if is gamer segment: ${result}`)
     getGamerAd();
   } else {
-    console.log(`segment doesnt return gamer - served default`)
+    console.log(`segment doesnt return gamer - served default ad`)
   }
 });
 };
@@ -41,16 +41,14 @@ function getGamerAd () {
   window.googletag.cmd.push(function () {
   window.googletag.pubads().setTargeting('permutive', 'gaming');
   googletag.enableServices();
-  console.log( `3) pubads called with segment data `)
+  console.log( `3) pubads called with segment data `)// check
   });
 }
 
-//Use Track module to pass metadata to permutive (title, author, categories); then
-//pass segment module to check against gamer profile.
-//function trackPageview () {
+/*Use Track module to pass metadata to permutive (title, author, categories); then
+pass segment module to check against gamer profile.*/
 const options = {
   success: function(event) {
-    //console.log returns event data collected.
     console.log(`1) success callback in Permutive.track: ${JSON.stringify(event)}`)
     setGamerSeg();
   },
@@ -61,10 +59,11 @@ const options = {
   permutive.track('Pageview', {
   title: getTitle(),
   author: getAuthor(),
-  categories: ["gaming", "string2", "string3"]
+  categories: ["gaming", "string2", "string3"] //hard coded categories for demonstration purposes.
 }, options);
-//};
 
+/*Scroll interval of 25,50,75 and 100% are passed to scroll function and saved in Permutive
+TODO: currently fires every time condition met, need to adjust*/
 function trackScroll (scrollVal) {
   const scrollOpt = {
     success: function() {
@@ -75,19 +74,20 @@ function trackScroll (scrollVal) {
     }
   }
   permutive.track('Scroll', {
-    scroll_depth: (scrollVal/100)
+    scroll_depth: (scrollVal/100) //scroll value divided by 100 to match schema. ie. 0.25
   },scrollOpt)
 }
 
+/*Calculate scroll depth on page. **TODO: needs to be refactored and condition check
+so that only fires 4 times (currrently fires every time @ 25%,50%,75% 100% )*/
 function amountscrolled(){
   let winheight= window.innerHeight || (document.documentElement || document.body).clientHeight
   let docheight = getDocHeight()
   let scrollTop = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop
   let trackLength = docheight - winheight
-  let pctScrolled = Math.floor(scrollTop/trackLength * 100) // gets percentage scrolled (ie: 80 or NaN if tracklength == 0)
+  let pctScrolled = Math.floor(scrollTop/trackLength * 100) // gets percentage scrolled
   if (pctScrolled % 25 == 0 && pctScrolled !== 0) {
-    console.log(pctScrolled + '% scrolled')
-    trackScroll(pctScrolled)
+    trackScroll(pctScrolled) //pass 25, 50, 75 0r 100 intervals to track function.
   }
 }
 window.addEventListener("scroll", function(){
